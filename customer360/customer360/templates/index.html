@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+<!-- This line indicates that this template extends from a base template called 'base.html'. 
+     The base template provides a structure, and this template fills in the 'content' block defined in 'base.html'. -->
+
+{% load static %}
+<!-- This loads Django's static template tag so we can use it to reference static files like CSS or JavaScript. -->
+
+{% block content %}
+<!-- The 'block content' tag indicates that everything inside this block will replace the 'content' block from the 'base.html' template. -->
+
+<html>
+    <head>
+        <!-- Setting the title for this specific page -->
+        <title>Home Page</title>
+    </head>
+
+    <!-- A script that handles customer selection and redirection -->
+    <script>
+        function set_customer() {
+            // Selects the radio button that is checked (the selected customer)
+            var cinput = document.querySelector('input[name="selected_customers"]:checked');
+            
+            // If a customer is selected (radio button is checked)
+            if (cinput) {
+                // Get the value (customer ID) of the selected radio button
+                cid = cinput.value;
+                // Redirects the user to the interaction page for the selected customer
+                window.location = "/interact/" + cid;
+            }
+            else {
+                // If no customer is selected, show an alert message
+                alert("Please select a customer");
+            }
+        }
+    </script>
+
+    <body>
+        <!-- Page Heading -->
+        <h1>Welcome to Customer 360</h1>
+        <!-- A short description of the page's purpose -->
+        <p>Interact and Manage your Customers</p>
+
+        <!-- A button that calls the 'set_customer' function when clicked. The button has Bootstrap's 'btn btn-primary' classes for styling. -->
+        <a class="btn btn-primary" style="font-weight: bold; display: inline;" onclick="set_customer()">Interact</a>
+
+        <!-- A table to display a list of customers. 'table' is a Bootstrap class to style the table. -->
+        <table class="table">
+            <thead>
+                <!-- Table headers for displaying customer details -->
+                <tr>
+                    <th>Customer ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Address</th>
+                    <th>Selected</th> <!-- Column for radio buttons to select a customer -->
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Looping through the 'customers' object passed from the Django view -->
+                {% for customer in customers %}
+                    <tr>
+                        <!-- Displaying each customer's details (ID, name, email, phone, and address) -->
+                        <td>{{customer.id}}</td>
+                        <td>{{customer.name}}</td>
+                        <td>{{customer.email}}</td>
+                        <td>{{customer.phone}}</td>
+                        <td>{{customer.address}}</td>
+                        <td>
+                            <!-- Radio button for selecting a customer. The value of the radio button is the customer's ID. -->
+                            <input type="radio" name="selected_customers" value="{{customer.id}}">
+                        </td>
+                    </tr>
+                {% endfor %}
+                <!-- The loop ends here after iterating over all customers -->
+            </tbody>
+        </table>
+    </body>
+</html>
+
+{% endblock content %}
+<!-- The 'endblock' tag closes the block content that was opened earlier. This block replaces the content block in 'base.html'. -->
