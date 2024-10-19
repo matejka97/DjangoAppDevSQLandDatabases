@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+<!-- This template extends the 'base.html' template, inheriting its structure and layout. 
+     The content in this template will be inserted into the 'content' block of the base template. -->
+
+{% load static %}
+<!-- This loads the static template tag for referencing static files, although it's not used directly in this template. -->
+
+{% block content %}
+<!-- The content inside this block will be inserted into the 'content' block defined in 'base.html'. -->
+
+<html>
+    <head>
+        <!-- The title for this specific page. It appears in the browser tab. -->
+        <title>Interact & Manage</title>
+    </head>
+
+    <!-- JavaScript functions to manage button selection and form validation -->
+    <script>
+        // This function handles the visual selection of buttons. When a button is clicked, it becomes active, and the others are deactivated.
+        function selectButton(element) {
+            // Get all buttons in the parent element (button group)
+            var buttons = element.parentElement.getElementsByClassName("btn");
+            // Loop through the buttons and remove the 'active' class from all of them
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].classList.remove("active");
+            }
+            // Add the 'active' class to the clicked button
+            element.classList.add("active");
+        }
+
+        // This function checks if all required fields are filled before allowing form submission.
+        function check_selected() {
+            // Get the selected 'direction' radio button
+            var dirinput = document.querySelector('input[name="direction"]:checked');
+            // Get the selected 'channel' radio button
+            var chaninput = document.querySelector('input[name="channel"]:checked');
+            // Get the content of the 'summary' text area (this is not present in this specific form, but it checks for its value)
+            var summary = document.querySelector('textarea[name="summary"]').value;
+
+            // If either the 'direction', 'channel', or 'summary' is empty, show an alert and prevent form submission
+            if (!dirinput || !chaninput || summary === "") {
+                alert("Please fill all required fields");
+                return false; // Prevent form submission
+            }
+            return false; // In this case, submission is prevented for testing (you might change it to 'true' later)
+        }
+    </script>
+
+    <body>
+        <!-- Main heading for the page -->
+        <h1>Interact With Your Customers</h1>
+
+        <!-- Form for capturing customer interaction data. 
+             The form uses POST method to submit the data to the current page ('#'), and includes the 'onsubmit' handler for form validation. -->
+        <form class="form" method="post" onsubmit="return check_selected()" action="#">
+            
+            <!-- CSRF token for security (prevents cross-site request forgery). Required for POST forms in Django. -->
+            {% csrf_token %}
+
+            <!-- Field for selecting the 'Channel' of interaction (e.g., Phone, Email, etc.). -->
+            <div class="form-group">
+                <label>Channel</label>
+                <div class="btn-group" data-toggle="buttons">
+                    <!-- Looping through the 'channels' list passed from the Django backend to create a radio button for each channel. -->
+                    {% for channel in channels %}
+                    <label class="btn btn-outline-primary" onclick="selectButton(this)">
+                        <!-- Radio button for selecting a channel (the value comes from the 'channel.0'). -->
+                        <input type="radio" name="channel" value="{{channel.0}}" required> {{ channel.1 }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Field for selecting the 'Direction' of interaction (e.g., Inbound, Outbound). -->
+            <div class="form-group">
+                <label>Direction</label>
+                <div class="btn-group" data-toggle="buttons">
+                    <!-- Looping through the 'directions' list passed from the Django backend to create a radio button for each direction. -->
+                    {% for direction in directions %}
+                    <label class="btn btn-outline-primary" onclick="selectButton(this)">
+                        <!-- Radio button for selecting a direction (the value comes from the 'direction.0'). -->
+                        <input type="radio" name="direction" value="{{direction.0}}" required> {{ direction.1 }}
+                    </label>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <!-- Submit button for the form. Styled as a green button using Bootstrap classes. -->
+            <button type="submit" class="btn btn-success">Save Interaction</button>
+
+            <!-- Placeholder for any messages passed from the backend (e.g., success or error messages). -->
+            <p>{{msg}}</p>
+        </form>
+    </body>
+</html>
+
+{% endblock content %}
+<!-- End of the 'content' block. All content within this block replaces the 'content' block in the base template. -->

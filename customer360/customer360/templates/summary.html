@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+<!-- This template extends from 'base.html', which means it inherits the layout and structure from the base template. 
+     The content here will be inserted into the 'content' block of 'base.html'. -->
+
+{% load static %}
+<!-- This line loads the static template tag, which allows for referencing static files like CSS, JS, etc., although it's not specifically used in this template. -->
+
+{% block content %}
+<!-- The content block where the template's content will be placed, replacing the 'content' block in the base template. -->
+
+<html>
+    <body>
+        <!-- Main heading for the page -->
+        <h1>Interactions in last 30 Days</h1>
+
+        <!-- Conditional statement that checks if there are no interactions in the last 30 days -->
+        {% if not interactions %}
+            <!-- If the 'interactions' variable is empty or None, this message will be displayed. -->
+            <p>there are no interactions in the last 30 days</p>
+        {% else %}
+            <!-- If there are interactions, a table is displayed to show interaction data. The table uses Bootstrap's 'table' class for styling. -->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <!-- Table headers for the channel, direction, and count of interactions. -->
+                        <th>Channel</th>
+                        <th>Direction</th>
+                        <th>Count</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Loop through the 'interactions' list, which is passed from the Django view. For each 'interaction', a table row is created. -->
+                    {% for interaction in interactions %}
+                        <tr>
+                            <!-- Display the channel, direction, and count of each interaction in its own table cell. -->
+                            <td>{{ interaction.channel }}</td>
+                            <td>{{ interaction.direction }}</td>
+                            <td>{{ interaction.count }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Display the total count of all interactions, passed from the Django view as 'count'. -->
+            <h4>Total: {{ count }}</h4>
+        {% endif %}
+        <!-- The 'if' statement ends here. It ensures that if there are interactions, a table is shown; otherwise, a message is displayed. -->
+    </body>
+</html>
+
+{% endblock content %}
+<!-- This closes the 'content' block. All content within this block will replace the 'content' block in 'base.html'. -->
